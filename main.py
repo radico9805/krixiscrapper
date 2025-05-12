@@ -3,13 +3,14 @@ import pytesseract
 from telethon import TelegramClient, events
 from PIL import Image
 from io import BytesIO
+import asyncio
 
-# API credentials from https://my.telegram.org
+# API credentials
 api_id = 27164292
 api_hash = '857d037ef546396f038980eeef6169a0'
 session_name = 'krixi_session'
 
-# Channels (as integers, NOT strings)
+# Channels (as integers)
 source_channel = -1002373156614
 target_channel = -1002503432839
 
@@ -34,6 +35,14 @@ async def handler(event):
     if text_content.strip():
         await client.send_message(target_channel, text_content.strip())
 
-print("✅ Krixi Scraper running... Ctrl+C to stop.")
-client.start()
-client.run_until_disconnected()
+async def main():
+    await client.connect()
+    if not await client.is_user_authorized():
+        print("❌ Session not authorized. Please create the session locally and upload it.")
+        return
+
+    print("✅ Krixi Scraper running... Ctrl+C to stop.")
+    await client.run_until_disconnected()
+
+if __name__ == "__main__":
+    asyncio.run(main())
